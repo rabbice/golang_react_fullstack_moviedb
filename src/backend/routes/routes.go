@@ -6,14 +6,14 @@ import (
 )
 
 func RunAPI(address string) error {
-	m, err := controllers.NewHandler()
+	m, err := controllers.Conn()
 	if err != nil {
 		return err
 	}
-	return RunAPIWithHandler(address, m)
+	return MovieService(address, m)
 }
 
-func RunAPIWithHandler(address string, m controllers.HandlerInterface) error {
+func MovieService(address string, m controllers.MovieHandlers) error {
 	r := gin.Default()
 	r.GET("/movies", m.GetMovies)
 	r.GET("/movie/:id", m.ShowMovie)

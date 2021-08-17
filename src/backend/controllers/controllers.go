@@ -9,7 +9,7 @@ import (
 	"github.com/rabbice/movieapi/src/backend/models"
 )
 
-type HandlerInterface interface {
+type MovieHandlers interface {
 	GetMovies(c *gin.Context)
 	ShowMovie(c *gin.Context)
 	AddMovie(c *gin.Context)
@@ -21,11 +21,11 @@ type Handler struct {
 	DB dblayer.DBLayer
 }
 
-func NewHandler() (HandlerInterface, error) {
+func Conn() (MovieHandlers, error) {
 	return DBHandler("mysql", "root:root@/movieapi")
 }
 
-func DBHandler(dbtype, conn string) (HandlerInterface, error) {
+func DBHandler(dbtype, conn string) (MovieHandlers, error) {
 	db, err := dblayer.InitDB(dbtype, conn)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func DBHandler(dbtype, conn string) (HandlerInterface, error) {
 	}, nil
 }
 
-func HandlerWithDB(DB dblayer.DBLayer) HandlerInterface {
+func HandlerWithDB(DB dblayer.DBLayer) MovieHandlers {
 	return &Handler{DB: DB}
 }
 
