@@ -9,4 +9,5 @@ type DBLayer interface {
 	GetMovieByID(int) (models.Movie, error)
 	AddMovie(models.Movie) (models.Movie, error)
 	DeleteMovieByID(int) (models.Movie, error)
+	UpdateMovieByID(int) (models.Movie, error)
 }
