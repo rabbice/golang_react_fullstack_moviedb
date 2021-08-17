@@ -18,6 +18,7 @@ func RunAPIWithHandler(address string, m controllers.HandlerInterface) error {
 	r.GET("/movies", m.GetMovies)
 	r.GET("/movie/:id", m.ShowMovie)
 	r.POST("/movie/create", m.AddMovie)
-	r.DELETE("movie/:id/delete", m.DeleteMovie)
+	r.PUT("/movie/:id", m.UpdateMovie)
+	r.DELETE("movie/:id", m.DeleteMovie)
 	return r.Run(address)
 }
