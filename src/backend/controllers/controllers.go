@@ -14,6 +14,7 @@ type HandlerInterface interface {
 	ShowMovie(c *gin.Context)
 	AddMovie(c *gin.Context)
 	DeleteMovie(c *gin.Context)
+	UpdateMovie(c *gin.Context)
 }
 
 type Handler struct {
@@ -54,8 +55,8 @@ func (m *Handler) ShowMovie(c *gin.Context) {
 	if m.DB == nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Request.URL.Query().Get(":id"))
-	if err != nil {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id < 1 {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -85,11 +86,29 @@ func (m *Handler) AddMovie(c *gin.Context) {
 	c.JSON(http.StatusOK, movie)
 }
 
+func (m *Handler) UpdateMovie(c *gin.Context) {
+	if m.DB == nil {
+		return
+	}
+	var movie models.Movie
+	err := c.ShouldBindJSON(&movie)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	id, _ := strconv.Atoi(c.Param("id"))
+	movie, err = m.DB.UpdateMovieByID(id)
+	if err != nil || id < 1 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, movie)
+}
 func (m *Handler) DeleteMovie(c *gin.Context) {
 	if m.DB == nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Request.URL.Query().Get(":id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id < 1 {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
