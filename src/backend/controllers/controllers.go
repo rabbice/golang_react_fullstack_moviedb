@@ -20,8 +20,22 @@ type Handler struct {
 	DB dblayer.DBLayer
 }
 
-func NewHandler() (*Handler, error) {
-	return new(Handler), nil
+func NewHandler() (HandlerInterface, error) {
+	return DBHandler("mysql", "root:root@/movieapi")
+}
+
+func DBHandler(dbtype, conn string) (HandlerInterface, error) {
+	db, err := dblayer.InitDB(dbtype, conn)
+	if err != nil {
+		return nil, err
+	}
+	return &Handler{
+		DB: db,
+	}, nil
+}
+
+func HandlerWithDB(DB dblayer.DBLayer) HandlerInterface {
+	return &Handler{DB: DB}
 }
 
 func (m *Handler) GetMovies(c *gin.Context) {
@@ -40,8 +54,7 @@ func (m *Handler) ShowMovie(c *gin.Context) {
 	if m.DB == nil {
 		return
 	}
-	p := c.Param(":id")
-	id, err := strconv.Atoi(p)
+	id, err := strconv.Atoi(c.Request.URL.Query().Get(":id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -76,9 +89,8 @@ func (m *Handler) DeleteMovie(c *gin.Context) {
 	if m.DB == nil {
 		return
 	}
-	p := c.Param(":id")
-	id, err := strconv.Atoi(p)
-	if err != nil {
+	id, err := strconv.Atoi(c.Request.URL.Query().Get(":id"))
+	if err != nil || id < 1 {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
