@@ -1,21 +1,38 @@
 {
-  "name": "movieapi",
-  "version": "1.0.0",
-  "description": "Frontend for Movie API",
-  "main": "dist/bundle.js",
-  "author": "Ian Maru",
-  "license": "MIT",
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "@types/react": "16",
-    "@types/react-dom": "16",
-    "awesome-typescript-loader": "^5.2.1",
-    "bootstrap": "^5.1.0",
-    "react-dom": "16",
-    "source-map-loader": "^3.0.0"
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.0.1"
   },
-  "devDependencies": {
-    "typescript": "^4.3.5",
-    "webpack": "^5.50.0",
-    "webpack-cli": "^4.8.0"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
