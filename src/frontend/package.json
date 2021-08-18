@@ -1,0 +1,21 @@
+{
+  "name": "movieapi",
+  "version": "1.0.0",
+  "description": "Frontend for Movie API",
+  "main": "dist/bundle.js",
+  "author": "Ian Maru",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "16",
+    "@types/react-dom": "16",
+    "awesome-typescript-loader": "^5.2.1",
+    "bootstrap": "^5.1.0",
+    "react-dom": "16",
+    "source-map-loader": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5",
+    "webpack": "^5.50.0",
+    "webpack-cli": "^4.8.0"
+  }
+}
