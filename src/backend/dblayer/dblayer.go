@@ -17,4 +17,5 @@ type DBLayer interface {
 	AddUser(models.User) (models.User, error)
 	SignInUser(email, password string) (models.User, error)
 	SignOutUserById(int) error
+	AuthUser(models.User) (models.User, error)
 }

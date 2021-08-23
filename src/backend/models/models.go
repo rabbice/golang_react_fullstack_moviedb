@@ -19,10 +19,11 @@ func (Movie) TableName() string {
 
 type User struct {
 	gorm.Model
+	ID        int    `gorm:"column:id"`
 	FirstName string `gorm:"column:firstname" json:"first_name"`
 	LastName  string `gorm:"column:lastname" json:"last_name"`
-	Email     string `gorm:"column:email,unique" json:"email,omitempty"`
-	Password  string `json:"password"`
+	Email     string `gorm:"column:email" json:"email,omitempty"`
+	Password  string `json:"-"`
 	LoggedIn  bool   `gorm:"column:loggedin" json:"loggedin"`
 }
 

@@ -3,11 +3,15 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/rabbice/movieapi/src/backend/dblayer"
 	"github.com/rabbice/movieapi/src/backend/models"
 )
+
+const SecretKey = "secret"
 
 type Handlers interface {
 	GetMovies(c *gin.Context)
@@ -159,10 +163,24 @@ func (m *Handler) SignIn(c *gin.Context) {
 			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    strconv.Itoa(int(user.ID)),
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+	token, err := claims.SignedString([]byte(SecretKey))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "could not login"})
+		return
+	}
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		cookie = "not set"
+		c.SetCookie("jwt", token, 60*60*24, "/", "localhost", false, true)
+	}
+	c.JSON(http.StatusOK, cookie)
 }
 
 func (m *Handler) SignOut(c *gin.Context) {
