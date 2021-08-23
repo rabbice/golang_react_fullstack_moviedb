@@ -16,3 +16,16 @@ type Movie struct {
 func (Movie) TableName() string {
 	return "test"
 }
+
+type User struct {
+	gorm.Model
+	FirstName string `gorm:"column:firstname" json:"first_name"`
+	LastName  string `gorm:"column:lastname" json:"last_name"`
+	Email     string `gorm:"column:email,unique" json:"email,omitempty"`
+	Password  string `json:"password"`
+	LoggedIn  bool   `gorm:"column:loggedin" json:"loggedin"`
+}
+
+func (User) TableName() string {
+	return "users"
+}

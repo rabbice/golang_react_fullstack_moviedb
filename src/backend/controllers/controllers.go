@@ -9,23 +9,26 @@ import (
 	"github.com/rabbice/movieapi/src/backend/models"
 )
 
-type MovieHandlers interface {
+type Handlers interface {
 	GetMovies(c *gin.Context)
 	ShowMovie(c *gin.Context)
 	AddMovie(c *gin.Context)
 	DeleteMovie(c *gin.Context)
 	UpdateMovie(c *gin.Context)
+	AddUser(c *gin.Context)
+	SignIn(c *gin.Context)
+	SignOut(c *gin.Context)
 }
 
 type Handler struct {
 	DB dblayer.DBLayer
 }
 
-func Conn() (MovieHandlers, error) {
+func Conn() (Handlers, error) {
 	return DBHandler("mysql", "root:root@/movieapi")
 }
 
-func DBHandler(dbtype, conn string) (MovieHandlers, error) {
+func DBHandler(dbtype, conn string) (Handlers, error) {
 	db, err := dblayer.InitDB(dbtype, conn)
 	if err != nil {
 		return nil, err
@@ -35,7 +38,7 @@ func DBHandler(dbtype, conn string) (MovieHandlers, error) {
 	}, nil
 }
 
-func HandlerWithDB(DB dblayer.DBLayer) MovieHandlers {
+func HandlerWithDB(DB dblayer.DBLayer) Handlers {
 	return &Handler{DB: DB}
 }
 
@@ -119,4 +122,61 @@ func (m *Handler) DeleteMovie(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, movie)
+}
+
+func (m *Handler) AddUser(c *gin.Context) {
+	if m.DB == nil {
+		return
+	}
+	var user models.User
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	user, err = m.DB.AddUser(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (m *Handler) SignIn(c *gin.Context) {
+	if m.DB == nil {
+		return
+	}
+	var user models.User
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	user, err = m.DB.SignInUser(user.Email, user.Password)
+	if err != nil {
+		//if the error is invalid password, return forbidden http error
+		if err == dblayer.ErrINVALIDPASSWORD {
+			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (m *Handler) SignOut(c *gin.Context) {
+	if m.DB == nil {
+		return
+	}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error})
+		return
+	}
+	err = m.DB.SignOutUserById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 }

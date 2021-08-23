@@ -14,7 +14,7 @@ func RunAPI(address string) error {
 	return MovieService(address, m)
 }
 
-func MovieService(address string, m controllers.MovieHandlers) error {
+func MovieService(address string, m controllers.Handlers) error {
 	r := gin.Default()
 	r.Use(middleware.SecureHeaders())
 	r.GET("/movies", m.GetMovies)
@@ -22,5 +22,8 @@ func MovieService(address string, m controllers.MovieHandlers) error {
 	r.POST("/movie/create", m.AddMovie)
 	r.PUT("/movie/:id", m.UpdateMovie)
 	r.DELETE("movie/:id", m.DeleteMovie)
+	r.POST("users/signup", m.AddUser)
+	r.POST("users/signin", m.SignIn)
+	r.POST("users/signout", m.SignOut)
 	return r.Run(address)
 }
