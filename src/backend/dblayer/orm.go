@@ -46,7 +46,9 @@ func (db *DBORM) AddUser(user models.User) (models.User, error) {
 	user.LoggedIn = true
 	return user, db.Create(&user).Error
 }
-
+func (db *DBORM) GetUserById(id int) (user models.User, err error) {
+	return user, db.Where("id = ?", id).First(&user).Error
+}
 func hashPassword(s *string) error {
 	if s == nil {
 		return errors.New("reference provided for hashing password is nil")

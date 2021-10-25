@@ -24,6 +24,7 @@ func MovieService(address string, m controllers.Handlers) error {
 	r.DELETE("movie/:id", m.DeleteMovie)
 	r.POST("users/signup", m.AddUser)
 	r.POST("users/signin", m.SignIn)
-	r.POST("users/signout", m.SignOut)
+	r.POST("users/signout/:id", m.SignOut)
+	r.GET("user/:id", m.GetUser)
 	return r.Run(address)
 }

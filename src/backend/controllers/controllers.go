@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -22,6 +23,7 @@ type Handlers interface {
 	AddUser(c *gin.Context)
 	SignIn(c *gin.Context)
 	SignOut(c *gin.Context)
+	GetUser(c *gin.Context)
 }
 
 type Handler struct {
@@ -177,10 +179,48 @@ func (m *Handler) SignIn(c *gin.Context) {
 	}
 	cookie, err := c.Cookie("jwt")
 	if err != nil {
-		cookie = "not set"
+		cookie = "NotSet"
 		c.SetCookie("jwt", token, 60*60*24, "/", "localhost", false, true)
 	}
 	c.JSON(http.StatusOK, cookie)
+}
+
+func (m *Handler) GetUser(c *gin.Context) {
+	var user models.User
+	id, _ := strconv.Atoi(c.Param("id"))
+	user, err := m.DB.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "user with that id doesn't exist"})
+		return
+	}
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized request. please log in first"})
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if !token.Valid {
+		c.Writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	claims := token.Claims.(*jwt.StandardClaims)
+	fmt.Println(claims.Issuer)
+	c.JSON(http.StatusOK, user)
+
 }
 
 func (m *Handler) SignOut(c *gin.Context) {
@@ -197,4 +237,7 @@ func (m *Handler) SignOut(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	c.SetCookie("jwt", "", -3600, "/", "localhost", false, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "signed out successfully"})
 }
