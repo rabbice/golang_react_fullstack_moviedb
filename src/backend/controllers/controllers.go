@@ -31,7 +31,7 @@ type Handler struct {
 }
 
 func Conn() (Handlers, error) {
-	return DBHandler("mysql", "root:root@/movieapi")
+	return DBHandler("mysql", "root@/movieapi")
 }
 
 func DBHandler(dbtype, conn string) (Handlers, error) {
@@ -82,7 +82,7 @@ func (m *Handler) AddMovie(c *gin.Context) {
 		return
 	}
 	var movie models.Movie
-	err := c.ShouldBindJSON(&movie)
+	err := c.BindJSON(&movie)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -135,7 +135,7 @@ func (m *Handler) AddUser(c *gin.Context) {
 		return
 	}
 	var user models.User
-	err := c.ShouldBindJSON(&user)
+	err := c.BindJSON(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -153,7 +153,7 @@ func (m *Handler) SignIn(c *gin.Context) {
 		return
 	}
 	var user models.User
-	err := c.ShouldBindJSON(&user)
+	err := c.BindJSON(&user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component<{}, {}> { 
   render() {
-    const movieList = () => <MoviesContainer movieListURL="http://localhost:8000/movies"/>
+    const movieList = () => <MoviesContainer movieListURL="http://localhost:8000/v1/movies"/>
     return <Router>
       <div className="container">
         <Navigation brandName="Movies"/>
