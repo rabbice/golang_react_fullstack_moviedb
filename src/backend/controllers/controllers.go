@@ -31,7 +31,7 @@ type Handler struct {
 }
 
 func Conn() (Handlers, error) {
-	return DBHandler("mysql", "root@/movieapi")
+	return DBHandler("mysql", "root:pass123@tcp(host.docker.internal:3306)/movieapi")
 }
 
 func DBHandler(dbtype, conn string) (Handlers, error) {
