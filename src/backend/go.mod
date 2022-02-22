@@ -1,4 +1,4 @@
-module github.com/rabbice/movieapi
+module github.com/rabbice/movieapi/src/backend
 
 go 1.16
 
