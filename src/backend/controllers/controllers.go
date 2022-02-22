@@ -31,7 +31,7 @@ type Handler struct {
 }
 
 func Conn() (Handlers, error) {
-	return DBHandler("mysql", "root:pass123@tcp(host.docker.internal:3306)/movieapi")
+	return DBHandler("mysql", "root@/movieapi")
 }
 
 func DBHandler(dbtype, conn string) (Handlers, error) {
@@ -92,6 +92,32 @@ func (m *Handler) AddMovie(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized request. please log in first"})
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if !token.Valid {
+		c.Writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	claims := token.Claims.(*jwt.StandardClaims)
+	fmt.Println(claims.Issuer)
 	c.JSON(http.StatusOK, movie)
 }
 
@@ -111,6 +137,32 @@ func (m *Handler) UpdateMovie(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized request. please log in first"})
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if !token.Valid {
+		c.Writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	claims := token.Claims.(*jwt.StandardClaims)
+	fmt.Println(claims.Issuer)
 	c.JSON(http.StatusOK, movie)
 }
 func (m *Handler) DeleteMovie(c *gin.Context) {
@@ -122,12 +174,39 @@ func (m *Handler) DeleteMovie(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	movie, err := m.DB.DeleteMovieByID(id)
+	_, err = m.DB.DeleteMovieByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, movie)
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized request. please log in first"})
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		c.Writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if !token.Valid {
+		c.Writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	claims := token.Claims.(*jwt.StandardClaims)
+	fmt.Println(claims.Issuer)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "movie deleted successfully"})
 }
 
 func (m *Handler) AddUser(c *gin.Context) {
@@ -135,7 +214,7 @@ func (m *Handler) AddUser(c *gin.Context) {
 		return
 	}
 	var user models.User
-	err := c.BindJSON(&user)
+	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -153,7 +232,7 @@ func (m *Handler) SignIn(c *gin.Context) {
 		return
 	}
 	var user models.User
-	err := c.BindJSON(&user)
+	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
