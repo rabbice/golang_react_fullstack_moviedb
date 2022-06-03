@@ -5186,9 +5186,15 @@ flush-write-stream@^1.0.0:
     readable-stream "^2.3.6"
 
 follow-redirects@^1.0.0:
+<<<<<<< HEAD
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
   integrity sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==
+=======
+  version "1.14.9"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.9.tgz#dd4ea157de7bfaf9ea9b3fbd85aa16951f78d8d7"
+  integrity sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==
+>>>>>>> 14f016002b283c4be309d74fb32cb6dc4fe8737c
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -11160,10 +11166,17 @@ url-loader@4.1.1:
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
 
+<<<<<<< HEAD
 url-parse@^1.5.10:
   version "1.5.10"
   resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
   integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
+=======
+url-parse@^1.4.3, url-parse@^1.4.7:
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.9.tgz#05ff26484a0b5e4040ac64dcee4177223d74675e"
+  integrity sha512-HpOvhKBvre8wYez+QhHcYiVvVmeF6DVnuSOOPhe3cTum3BnqHhvKaZm8FU5yTiOu/Jut2ZpB2rA/SbBA1JIGlQ==
+>>>>>>> 14f016002b283c4be309d74fb32cb6dc4fe8737c
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"

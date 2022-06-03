@@ -258,7 +258,7 @@ func (m *Handler) SignIn(c *gin.Context) {
 	}
 	cookie, err := c.Cookie("jwt")
 	if err != nil {
-		cookie = "NotSet"
+		cookie = "Set"
 		c.SetCookie("jwt", token, 60*60*24, "/", "localhost", false, true)
 	}
 	c.JSON(http.StatusOK, cookie)
